@@ -1,0 +1,18 @@
+{
+  "name": "opn-dca",
+  "version": "1.0.0",
+  "description": "Automated DCA Vault on OPN Chain — permissionless, non-custodial, fully on-chain",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:testnet": "hardhat run scripts/deploy.js --network opn_testnet",
+    "node": "hardhat node"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  }
+}

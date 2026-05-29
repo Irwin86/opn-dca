@@ -1,0 +1,71 @@
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.sub {
+  color: var(--text-2);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.field { display: flex; flex-direction: column; }
+
+.info {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: var(--text-2);
+}
+.infoRow span:last-child { color: var(--text); }
+
+.btn {
+  width: 100%;
+  background: var(--primary);
+  color: #000;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.02em;
+}
+.btn:hover:not(:disabled) {
+  background: #33eaff;
+  box-shadow: 0 0 24px var(--primary-glow);
+}
+
+.txLink {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+.txLink a { color: var(--primary); }
