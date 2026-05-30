@@ -236,9 +236,9 @@ contract DCAVault is ReentrancyGuard, Pausable, Ownable {
         if (!pos.active) revert PositionNotActive();
 
         // Interval check
-        uint256 nextSwapAt = pos.lastSwapAt + pos.intervalSeconds;
-        if (block.timestamp < nextSwapAt) {
-            revert IntervalNotElapsed(nextSwapAt, block.timestamp);
+        uint256 nextSwapTime = pos.lastSwapAt + pos.intervalSeconds;
+        if (block.timestamp < nextSwapTime) {
+            revert IntervalNotElapsed(nextSwapTime, block.timestamp);
         }
 
         uint256 available = _positionBalance(positionId);

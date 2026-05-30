@@ -1,44 +1,32 @@
-require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config();
+import hardhatToolboxViem from "@nomicfoundation/hardhat-toolbox-viem";
 
-/** @type import('hardhat/config').HardhatUserConfig */
-module.exports = {
+export default {
+  plugins: [hardhatToolboxViem],
   solidity: {
-    version: "0.8.24",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
+    profiles: {
+      default: {
+        version: "0.8.24",
+      },
+      production: {
+        version: "0.8.24",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       },
     },
   },
   networks: {
-    hardhat: {},
+    default: {
+      type: "edr-simulated",
+      chainType: "generic",
+    },
     opn_testnet: {
+      type: "http",
       url: process.env.OPN_TESTNET_RPC || "https://testnet-rpc.opnchain.io",
-      chainId: parseInt(process.env.OPN_CHAIN_ID || "9878"),
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
-  },
-  etherscan: {
-    apiKey: {
-      opn_testnet: process.env.OPN_EXPLORER_API_KEY || "placeholder",
-    },
-    customChains: [
-      {
-        network: "opn_testnet",
-        chainId: parseInt(process.env.OPN_CHAIN_ID || "9878"),
-        urls: {
-          apiURL: process.env.OPN_EXPLORER_API || "https://testnet-explorer.opnchain.io/api",
-          browserURL: process.env.OPN_EXPLORER_URL || "https://testnet-explorer.opnchain.io",
-        },
-      },
-    ],
-  },
-  paths: {
-    sources: "./contracts",
-    tests: "./test",
-    cache: "./cache",
-    artifacts: "./artifacts",
   },
 };
