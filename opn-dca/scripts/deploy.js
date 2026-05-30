@@ -1,48 +1,45 @@
-const { ethers } = require("hardhat");
+import hre from "hardhat";
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const connection = await hre.network.connect("opn_testnet");
+  const viem = connection.viem;
+
+  const [deployer] = await viem.getWalletClients();
+  const publicClient = await viem.getPublicClient();
+
+  const balance = await publicClient.getBalance({ address: deployer.account.address });
 
   console.log("─────────────────────────────────────────");
   console.log("  OPN-DCA Vault Deployment");
   console.log("─────────────────────────────────────────");
-  console.log("Deployer  :", deployer.address);
+  console.log("Deployer  :", deployer.account.address);
   console.log("Network   :", hre.network.name);
-  console.log("Balance   :", ethers.formatEther(await ethers.provider.getBalance(deployer.address)), "OPN");
+  console.log("Balance   :", balance.toString(), "wei");
   console.log("");
 
-  // ── Config ──────────────────────────────────────────────────────────────
-  // Update ROUTER_ADDRESS once a DEX is live on OPN Chain testnet.
-  // For initial testnet, deploy a MockRouter and use its address.
-  const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS || "0x0000000000000000000000000000000000000001";
-  const FEE_BPS = 30;       // 0.3% protocol fee
-  const KEEPER_BPS = 10;    // 0.1% keeper reward
+  // Deploy MockRouter first (no real DEX on testnet yet)
+  console.log("Deploying MockRouter...");
+  const mockRouter = await viem.deployContract("MockRouter", []);
+  console.log("MockRouter deployed to:", mockRouter.address);
 
-  // ── Deploy MockRouter (testnet only) ────────────────────────────────────
-  let routerAddress = ROUTER_ADDRESS;
-  if (hre.network.name === "opn_testnet" && ROUTER_ADDRESS.startsWith("0x000000")) {
-    console.log("No router set — deploying MockRouter for testnet...");
-    const MockRouter = await ethers.getContractFactory("MockRouter");
-    const mockRouter = await MockRouter.deploy();
-    await mockRouter.waitForDeployment();
-    routerAddress = await mockRouter.getAddress();
-    console.log("MockRouter deployed to:", routerAddress);
-  }
+  // Deploy DCAVault
+  const FEE_BPS = 30n;
+  const KEEPER_BPS = 10n;
 
-  // ── Deploy DCAVault ─────────────────────────────────────────────────────
   console.log("Deploying DCAVault...");
-  const DCAVault = await ethers.getContractFactory("DCAVault");
-  const vault = await DCAVault.deploy(routerAddress, FEE_BPS, KEEPER_BPS);
-  await vault.waitForDeployment();
+  const vault = await viem.deployContract("DCAVault", [
+    mockRouter.address,
+    FEE_BPS,
+    KEEPER_BPS,
+  ]);
 
-  const vaultAddress = await vault.getAddress();
   console.log("");
-  console.log("✅ DCAVault deployed to:", vaultAddress);
+  console.log("✅ DCAVault deployed to:", vault.address);
   console.log("");
   console.log("─────────────────────────────────────────");
   console.log("  Next steps:");
-  console.log("  1. Set VITE_DCA_VAULT_ADDRESS=" + vaultAddress + " in frontend/.env");
-  console.log("  2. Verify: npx hardhat verify --network opn_testnet", vaultAddress, routerAddress, FEE_BPS, KEEPER_BPS);
+  console.log("  1. Set VITE_DCA_VAULT_ADDRESS=" + vault.address + " in frontend/.env");
+  console.log("  2. Copy contract address to IOPn submission form");
   console.log("─────────────────────────────────────────");
 }
 
